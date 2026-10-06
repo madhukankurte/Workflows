@@ -23,6 +23,7 @@ jobs:
           echo test, and deploy your project.
   
   Test:
+    needs: build
     runs-on: ubuntu-latest
     steps:
     
