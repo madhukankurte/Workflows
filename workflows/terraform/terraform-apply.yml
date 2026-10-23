@@ -1,0 +1,54 @@
+name: Terraform Apply
+
+on:
+  workflow_call:
+    inputs:
+      terraform-version:
+        description: "Terraform CLI version"
+        required: false
+        type: string
+        default: "1.12.2"
+      working-directory:
+        description: "Directory containing the root Terraform configuration"
+        required: false
+        type: string
+        default: "."
+      plan-artifact-name:
+        description: "Artifact name produced by the Terraform Plan job in this workflow run"
+        required: false
+        type: string
+        default: "terraform-plan"
+
+permissions:
+  contents: read
+
+jobs:
+  apply:
+    name: Apply Saved Plan
+    runs-on: ubuntu-latest
+    environment: production
+    defaults:
+      run:
+        working-directory: ${{ inputs.working-directory }}
+
+    steps:
+      - name: Checkout caller repository
+        uses: actions/checkout@v4
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ inputs.terraform-version }}
+          terraform_wrapper: false
+
+      - name: Download saved plan
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ inputs.plan-artifact-name }}
+          path: ${{ inputs.working-directory }}
+
+      - name: Initialize Terraform
+        run: terraform init -input=false
+
+      - name: Apply saved plan
+        run: terraform apply -input=false -no-color tfplan

@@ -1,0 +1,64 @@
+name: Terraform Plan
+
+on:
+  workflow_call:
+    inputs:
+      terraform-version:
+        description: "Terraform CLI version"
+        required: false
+        type: string
+        default: "1.12.2"
+      working-directory:
+        description: "Directory containing the root Terraform configuration"
+        required: false
+        type: string
+        default: "."
+      plan-artifact-name:
+        description: "Name used to upload the saved plan"
+        required: false
+        type: string
+        default: "terraform-plan"
+    outputs:
+      plan-artifact-name:
+        description: "Name of the uploaded Terraform plan artifact"
+        value: ${{ jobs.plan.outputs.plan-artifact-name }}
+
+permissions:
+  contents: read
+
+jobs:
+  plan:
+    name: Initialize and Plan
+    runs-on: ubuntu-latest
+    outputs:
+      plan-artifact-name: ${{ steps.plan-artifact.outputs.name }}
+    defaults:
+      run:
+        working-directory: ${{ inputs.working-directory }}
+
+    steps:
+      - name: Checkout caller repository
+        uses: actions/checkout@v4
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ inputs.terraform-version }}
+          terraform_wrapper: false
+
+      - name: Initialize Terraform
+        run: terraform init -input=false
+
+      - name: Create saved plan
+        run: terraform plan -input=false -no-color -out=tfplan
+
+      # Saved plan files can contain sensitive values. Keep retention short and
+      # restrict access to this workflow run and repository.
+      - name: Upload saved plan
+        id: plan-artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.plan-artifact-name }}
+          path: ${{ inputs.working-directory }}/tfplan
+          if-no-files-found: error
+          retention-days: 1
