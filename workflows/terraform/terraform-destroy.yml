@@ -1,0 +1,53 @@
+name: Terraform Destroy
+
+on:
+  workflow_call:
+    inputs:
+      terraform-version:
+        description: "Terraform CLI version"
+        required: false
+        type: string
+        default: "1.12.2"
+      working-directory:
+        description: "Directory containing the root Terraform configuration"
+        required: false
+        type: string
+        default: "."
+      confirm-destroy:
+        description: "Must be true to permit destruction"
+        required: true
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  destroy:
+    name: Destroy Infrastructure
+    if: ${{ inputs.confirm-destroy }}
+    runs-on: ubuntu-latest
+    environment: production
+    defaults:
+      run:
+        working-directory: ${{ inputs.working-directory }}
+
+    steps:
+      - name: Checkout caller repository
+        uses: actions/checkout@v4
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ inputs.terraform-version }}
+          terraform_wrapper: false
+
+      - name: Initialize Terraform
+        run: terraform init -input=false
+
+      - name: Create destroy plan
+        run: terraform plan -destroy -input=false -no-color -out=tfdestroy
+
+      - name: Apply destroy plan
+        if: ${{ inputs.confirm-destroy }}
+        run: terraform apply -input=false -no-color tfdestroy
