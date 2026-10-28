@@ -18,12 +18,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Docker build
-        run: echo docker build -t ${{ env.CONTATINER_REGISTRY }}/$DOCKER_USERNAME/$IMAGE_NAME:latest
+        run: echo docker build -t ${{ env.CONTATINER_REGISTRY }}/${{ vars.DOCKER_USERNAME }}/$IMAGE_NAME:latest
 
       - name: Docker login
         env:
          DOCKER_PASSWORD: docker.io
-        run: echo docker login --username=$DOCKER_USERNAME --password=$DOCKER_PASSWORD
+        run: echo docker login --username=$DOCKER_USERNAME --password=${{ secrets.DOCKER_PASSWORD }}
 
       - name: Docker push
         run: echo docker push $CONTATINER_REGISTRY/$DOCKER_USERNAME/$IMAGE_NAME:latest
