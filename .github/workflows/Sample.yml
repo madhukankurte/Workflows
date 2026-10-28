@@ -40,7 +40,7 @@ jobs:
       - name: Run a one-line script
         run: echo Hello, world!
       - uses: actions/download-artifact@v8
-        name: upload Dragon artifact
+        name: download Dragon artifact
         with:
           name: Dragon-file    
       - name: list files
@@ -53,7 +53,7 @@ jobs:
      - name: Run a one-line script
        run: echo Hello, world!
      - uses: actions/download-artifact@v8
-       name: upload Dragon artifact
+       name: download Dragon artifact
        with:
          name: Dragon-file    
      - name: list files

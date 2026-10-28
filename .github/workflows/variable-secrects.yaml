@@ -1,0 +1,39 @@
+name: Expioring variable and Secrects
+
+on:
+  push:  
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Docker build
+        env:
+         CONTATINER_REGISTRY: docker.io
+         DOCKER_USERNAME: madhu93
+         IMAGE_NAME: custom_nginx
+        run: echo docker build -t ${{ env.CONTATINER_REGISTRY }}/$DOCKER_USERNAME/$IMAGE_NAME:latest
+
+      - name: Docker login
+        env:
+         DOCKER_PASSWORD: docker
+         DOCKER_USERNAME: madhu93
+        run: echo docker login --username=$DOCKER_USERNAME --password=$DOCKER_PASSWORD
+
+      - name: Docker push
+        env:
+         CONTATINER_REGISTRY: docker.io
+         DOCKER_USERNAME: madhu93
+         IMAGE_NAME: custom_nginx
+        run: echo docker push $CONTATINER_REGISTRY/$DOCKER_USERNAME/$IMAGE_NAME:latest
+
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+     - name: Docker build
+       env:
+        CONTATINER_REGISTRY: docker.io
+        DOCKER_USERNAME: madhu93
+        IMAGE_NAME: custom_nginx
+       run: echo docker run -d -p 8080:8080 ${{ env.CONTATINER_REGISTRY }}/$DOCKER_USERNAME/$IMAGE_NAME:latest
+                
