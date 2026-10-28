@@ -22,6 +22,8 @@ jobs:
           cat README.md
       - name: Genrate ASCII Artwork
         run: cowsay -f dragon "run for cover, i am a DRAGON.... " >> dragon.txt
+      - name: exec shell script
+        run: ./ascii-script
   
   Test:
     needs: build
