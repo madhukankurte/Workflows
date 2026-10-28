@@ -27,9 +27,18 @@ jobs:
          chmod +x ascii-script.sh
          ./ascii-script.sh
   
-  Test:
+  test:
     needs: build
     runs-on: ubuntu-latest
     steps:
       - name: Run a one-line script
         run: echo Hello, world!
+      - name: list files
+        run: ls -ltra 
+
+  deploy:
+    needs: [test]
+    runs-on: ubuntu-latest
+    steps:
+     - name: Run a one-line script
+       run: echo Hello, world!
