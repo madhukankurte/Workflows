@@ -16,6 +16,10 @@ jobs:
         run: |
           echo Add other actions to build,
           echo test, and deploy your project.
+          ls -ltra
+          cat README.md
+      - name: Genrate ASCII Artwork
+        run: cowsay -f dragon "run for cover, i am a DRAGON.... " >> dragon.txt
   
   Test:
     needs: build
