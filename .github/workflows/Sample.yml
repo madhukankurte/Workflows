@@ -23,7 +23,9 @@ jobs:
       - name: Genrate ASCII Artwork
         run: cowsay -f dragon "run for cover, i am a DRAGON.... " >> dragon.txt
       - name: exec shell script
-        run: ./ascii-script
+        run: |
+         chmod +x ascii-script.sh
+         ./ascii-script.sh
   
   Test:
     needs: build
