@@ -26,19 +26,35 @@ jobs:
         run: |
          chmod +x ascii-script.sh
          ./ascii-script.sh
-  
+
+      - uses: actions/upload-artifact@v7
+        name: upload Dragon artifact
+        with:
+          name: Dragon-file
+          path: dragon.txt
+         
   test:
     needs: build
     runs-on: ubuntu-latest
     steps:
       - name: Run a one-line script
         run: echo Hello, world!
+      - uses: actions/download-artifact@v8
+        name: upload Dragon artifact
+        with:
+          name: Dragon-file    
       - name: list files
-        run: ls -ltra 
-
+        run: ls -ltra
+      
   deploy:
     needs: [test]
     runs-on: ubuntu-latest
     steps:
      - name: Run a one-line script
        run: echo Hello, world!
+     - uses: actions/download-artifact@v8
+       name: upload Dragon artifact
+       with:
+         name: Dragon-file    
+     - name: list files
+       run: ls -ltra    
