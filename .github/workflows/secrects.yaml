@@ -1,7 +1,7 @@
 name: Expioring Secrects
 
 on:
-  push:  
+  workflow_dispatch:  
 
 env:
     CONTATINER_REGISTRY: docker.io
