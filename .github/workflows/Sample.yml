@@ -12,6 +12,8 @@ jobs:
         uses: actions/checkout@v7
       - name: Run a one-line script
         run: echo Hello, world!
+      - name: install cowsay program
+        run: sudo apt-get install cowsay -y
       - name: Run a multi-line script
         run: |
           echo Add other actions to build,
